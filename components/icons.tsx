@@ -417,6 +417,44 @@ export const PencilEditIcon = ({ size = 16 }: { size?: number }) => {
   );
 };
 
+export const ListChecksIcon = ({ size = 16 }: { size?: number }) => {
+  return (
+    <svg
+      height={size}
+      strokeLinejoin="round"
+      style={{ color: "currentcolor" }}
+      viewBox="0 0 16 16"
+      width={size}
+    >
+      <path
+        clipRule="evenodd"
+        d="M2.5 4.5L1 3L2 2L3.5 3.5L6 1L7 2L3.5 5.5L2.5 4.5ZM8.5 2.5H15V4H8.5V2.5ZM8.5 7.5H15V9H8.5V7.5ZM15 12.5H8.5V14H15V12.5ZM1 8L2.5 9.5L3.5 10.5L7 7L6 6L3.5 8.5L2 7L1 8ZM2.5 14.5L1 13L2 12L3.5 13.5L6 11L7 12L3.5 15.5L2.5 14.5Z"
+        fill="currentColor"
+        fillRule="evenodd"
+      />
+    </svg>
+  );
+};
+
+export const TextIcon = ({ size = 16 }: { size?: number }) => {
+  return (
+    <svg
+      height={size}
+      strokeLinejoin="round"
+      style={{ color: "currentcolor" }}
+      viewBox="0 0 16 16"
+      width={size}
+    >
+      <path
+        clipRule="evenodd"
+        d="M1 2H1.75H7.25H8H8.75H14.25H15V2.75V5H13.5V3.5H8.75V12.5H10.5V14H8H5.5V12.5H7.25V3.5H2.5V5H1V2.75V2Z"
+        fill="currentColor"
+        fillRule="evenodd"
+      />
+    </svg>
+  );
+};
+
 export const CheckedSquare = ({ size = 16 }: { size?: number }) => {
   return (
     <svg

@@ -7,7 +7,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { useSWRConfig } from "swr";
 import { unstable_serialize } from "swr/infinite";
-import { PlusIcon, TrashIcon } from "@/components/icons";
+import { PlusIcon, TrashIcon, ListChecksIcon, TextIcon } from "@/components/icons";
 import {
   getChatHistoryPaginationKey,
   SidebarHistory,
@@ -117,6 +117,29 @@ export function AppSidebar({ user }: { user: User | undefined }) {
           </SidebarMenu>
         </SidebarHeader>
         <SidebarContent>
+          <div className="px-2 py-2">
+            <div className="mb-2 px-2 text-xs font-medium text-muted-foreground">
+              Practice
+            </div>
+            <div className="flex flex-col gap-1">
+              <Link
+                href="/mcq"
+                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
+                onClick={() => setOpenMobile(false)}
+              >
+                <ListChecksIcon size={16} />
+                <span>MCQ Practice</span>
+              </Link>
+              <Link
+                href="/subjective"
+                className="flex items-center gap-2 rounded-md px-2 py-1.5 text-sm hover:bg-muted"
+                onClick={() => setOpenMobile(false)}
+              >
+                <TextIcon size={16} />
+                <span>Subjective Practice</span>
+              </Link>
+            </div>
+          </div>
           <SidebarHistory user={user} />
         </SidebarContent>
         <SidebarFooter>{user && <SidebarUserNav user={user} />}</SidebarFooter>
