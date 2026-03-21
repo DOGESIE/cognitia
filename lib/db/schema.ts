@@ -168,3 +168,37 @@ export const stream = pgTable(
 );
 
 export type Stream = InferSelectModel<typeof stream>;
+
+export const mcqQuestion = pgTable("MCQQuestion", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => user.id),
+  topic: text("topic").notNull(),
+  question: text("question").notNull(),
+  options: json("options").notNull().$type<string[]>(),
+  correctAnswer: varchar("correctAnswer").notNull(),
+  explanation: text("explanation"),
+  difficulty: varchar("difficulty", { length: 20 }).default("medium"),
+  userAnswer: varchar("userAnswer"),
+  isCorrect: boolean("isCorrect"),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+});
+
+export type MCQQuestion = InferSelectModel<typeof mcqQuestion>;
+
+export const subjectiveQuestion = pgTable("SubjectiveQuestion", {
+  id: uuid("id").primaryKey().notNull().defaultRandom(),
+  userId: uuid("userId")
+    .notNull()
+    .references(() => user.id),
+  topic: text("topic").notNull(),
+  question: text("question").notNull(),
+  modelAnswer: text("modelAnswer"),
+  userAnswer: text("userAnswer"),
+  feedback: text("feedback"),
+  score: varchar("score"),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+});
+
+export type SubjectiveQuestion = InferSelectModel<typeof subjectiveQuestion>;

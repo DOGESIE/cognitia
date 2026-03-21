@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { useSWRConfig } from "swr";
 import { unstable_serialize } from "swr/infinite";
 import { PlusIcon, TrashIcon } from "@/components/icons";
+import { BookOpen, FileText, User, MessageSquare } from "lucide-react";
 import {
   getChatHistoryPaginationKey,
   SidebarHistory,
@@ -72,7 +73,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                 }}
               >
                 <span className="cursor-pointer rounded-md px-2 font-semibold text-lg hover:bg-muted">
-                  Chatbot
+                  Cognitia
                 </span>
               </Link>
               <div className="flex flex-row gap-1">
@@ -117,6 +118,44 @@ export function AppSidebar({ user }: { user: User | undefined }) {
           </SidebarMenu>
         </SidebarHeader>
         <SidebarContent>
+          {/* Navigation Links */}
+          <div className="px-2 py-2">
+            <div className="space-y-1">
+              <Link
+                href="/"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-sidebar-accent text-sidebar-foreground"
+                onClick={() => setOpenMobile(false)}
+              >
+                <MessageSquare className="h-4 w-4" />
+                Chat
+              </Link>
+              <Link
+                href="/mcq"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-sidebar-accent text-sidebar-foreground"
+                onClick={() => setOpenMobile(false)}
+              >
+                <BookOpen className="h-4 w-4" />
+                MCQ Practice
+              </Link>
+              <Link
+                href="/subjective"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-sidebar-accent text-sidebar-foreground"
+                onClick={() => setOpenMobile(false)}
+              >
+                <FileText className="h-4 w-4" />
+                Subjective Q&A
+              </Link>
+              <Link
+                href="/account"
+                className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-sidebar-accent text-sidebar-foreground"
+                onClick={() => setOpenMobile(false)}
+              >
+                <User className="h-4 w-4" />
+                Account
+              </Link>
+            </div>
+          </div>
+          <div className="border-t border-sidebar-border my-2" />
           <SidebarHistory user={user} />
         </SidebarContent>
         <SidebarFooter>{user && <SidebarUserNav user={user} />}</SidebarFooter>

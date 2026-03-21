@@ -30,6 +30,10 @@ import {
   type User,
   user,
   vote,
+  mcqQuestion,
+  subjectiveQuestion,
+  type MCQQuestion,
+  type SubjectiveQuestion,
 } from "./schema";
 import { generateHashedPassword } from "./utils";
 
@@ -598,5 +602,211 @@ export async function getStreamIdsByChatId({ chatId }: { chatId: string }) {
       "bad_request:database",
       "Failed to get stream ids by chat id"
     );
+  }
+}
+
+// MCQ Question queries
+export async function saveMCQQuestion({
+  userId,
+  topic,
+  question,
+  options,
+  correctAnswer,
+  explanation,
+  difficulty,
+}: {
+  userId: string;
+  topic: string;
+  question: string;
+  options: string[];
+  correctAnswer: string;
+  explanation?: string;
+  difficulty?: string;
+}) {
+  try {
+    return await db
+      .insert(mcqQuestion)
+      .values({
+        userId,
+        topic,
+        question,
+        options,
+        correctAnswer,
+        explanation,
+        difficulty,
+      })
+      .returning();
+  } catch (_error) {
+    throw new ChatbotError("bad_request:database", "Failed to save MCQ question");
+  }
+}
+
+export async function getMCQQuestionsByUserId({ userId }: { userId: string }) {
+  try {
+    return await db
+      .select()
+      .from(mcqQuestion)
+      .where(eq(mcqQuestion.userId, userId))
+      .orderBy(desc(mcqQuestion.createdAt));
+  } catch (_error) {
+    throw new ChatbotError(
+      "bad_request:database",
+      "Failed to get MCQ questions by user id"
+    );
+  }
+}
+
+export async function updateMCQAnswer({
+  id,
+  userAnswer,
+  isCorrect,
+}: {
+  id: string;
+  userAnswer: string;
+  isCorrect: boolean;
+}) {
+  try {
+    return await db
+      .update(mcqQuestion)
+      .set({ userAnswer, isCorrect })
+      .where(eq(mcqQuestion.id, id));
+  } catch (_error) {
+    throw new ChatbotError("bad_request:database", "Failed to update MCQ answer");
+  }
+}
+
+export async function deleteMCQQuestion({ id }: { id: string }) {
+  try {
+    return await db.delete(mcqQuestion).where(eq(mcqQuestion.id, id));
+  } catch (_error) {
+    throw new ChatbotError("bad_request:database", "Failed to delete MCQ question");
+  }
+}
+
+// Subjective Question queries
+export async function saveSubjectiveQuestion({
+  userId,
+  topic,
+  question,
+  modelAnswer,
+}: {
+  userId: string;
+  topic: string;
+  question: string;
+  modelAnswer?: string;
+}) {
+  try {
+    return await db
+      .insert(subjectiveQuestion)
+      .values({
+        userId,
+        topic,
+        question,
+        modelAnswer,
+      })
+      .returning();
+  } catch (_error) {
+    throw new ChatbotError(
+      "bad_request:database",
+      "Failed to save subjective question"
+    );
+  }
+}
+
+export async function getSubjectiveQuestionsByUserId({
+  userId,
+}: {
+  userId: string;
+}) {
+  try {
+    return await db
+      .select()
+      .from(subjectiveQuestion)
+      .where(eq(subjectiveQuestion.userId, userId))
+      .orderBy(desc(subjectiveQuestion.createdAt));
+  } catch (_error) {
+    throw new ChatbotError(
+      "bad_request:database",
+      "Failed to get subjective questions by user id"
+    );
+  }
+}
+
+export async function updateSubjectiveAnswer({
+  id,
+  userAnswer,
+  feedback,
+  score,
+}: {
+  id: string;
+  userAnswer: string;
+  feedback?: string;
+  score?: string;
+}) {
+  try {
+    return await db
+      .update(subjectiveQuestion)
+      .set({ userAnswer, feedback, score })
+      .where(eq(subjectiveQuestion.id, id));
+  } catch (_error) {
+    throw new ChatbotError(
+      "bad_request:database",
+      "Failed to update subjective answer"
+    );
+  }
+}
+
+export async function deleteSubjectiveQuestion({ id }: { id: string }) {
+  try {
+    return await db
+      .delete(subjectiveQuestion)
+      .where(eq(subjectiveQuestion.id, id));
+  } catch (_error) {
+    throw new ChatbotError(
+      "bad_request:database",
+      "Failed to delete subjective question"
+    );
+  }
+}
+
+export async function getUserById({ id }: { id: string }) {
+  try {
+    const [selectedUser] = await db.select().from(user).where(eq(user.id, id));
+    return selectedUser || null;
+  } catch (_error) {
+    throw new ChatbotError("bad_request:database", "Failed to get user by id");
+  }
+}
+
+export async function getUserStats({ userId }: { userId: string }) {
+  try {
+    const [mcqCount] = await db
+      .select({ count: count(mcqQuestion.id) })
+      .from(mcqQuestion)
+      .where(eq(mcqQuestion.userId, userId));
+
+    const [mcqCorrectCount] = await db
+      .select({ count: count(mcqQuestion.id) })
+      .from(mcqQuestion)
+      .where(and(eq(mcqQuestion.userId, userId), eq(mcqQuestion.isCorrect, true)));
+
+    const [subjectiveCount] = await db
+      .select({ count: count(subjectiveQuestion.id) })
+      .from(subjectiveQuestion)
+      .where(eq(subjectiveQuestion.userId, userId));
+
+    const [chatCount] = await db
+      .select({ count: count(chat.id) })
+      .from(chat)
+      .where(eq(chat.userId, userId));
+
+    return {
+      totalMCQs: mcqCount?.count ?? 0,
+      correctMCQs: mcqCorrectCount?.count ?? 0,
+      totalSubjective: subjectiveCount?.count ?? 0,
+      totalChats: chatCount?.count ?? 0,
+    };
+  } catch (_error) {
+    throw new ChatbotError("bad_request:database", "Failed to get user stats");
   }
 }
